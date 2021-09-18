@@ -11,7 +11,6 @@ This is **not** production ready and probably never will. This is *Work in Progr
 
 It uses [ebiten](https://ebiten.org/) game library. The images  in the demo game belongs to that project, it is their default image samples.
 
-
 What can be done with it for now:
 
     - create a tile based map.
@@ -40,7 +39,7 @@ Running the example:
     go run sample/demo.go
 ```
 
-Creating a sprite (static object):
+Create a sprite (static object):
 ```go
     // you can specify an image or use the images described in ebiten
     img := opesvengine.Get_img_from_file("some_image.png")
@@ -48,7 +47,7 @@ Creating a sprite (static object):
     foo := opesvengine.NewSprite(10, 10, img, false)
 ```
 
-Creating a Character (live, movable object):
+Create a Character (a live, movable object):
 ```go
     // specify an image
     img := opesvengine.Get_img_from_file("some_image.png")

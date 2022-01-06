@@ -27,12 +27,12 @@ To be done:
     - better AI for npcs.
     - different actions for NPCs (now they just care about one thing: Kill you).
     - a score panel.
-    - still get stuck on the walls sometimes...
+    - (SOLVED) still get stuck on the walls sometimes...
     - documentation.
 
 Running the example:
 ```bash
-    git clone github.com/gsteixeira/opesvengine
+    git clone https://github.com/gsteixeira/opesvengine
     cd opesvengine/
     # get dependencies
     go mod tidy

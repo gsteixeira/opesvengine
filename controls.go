@@ -10,13 +10,21 @@ func grab_controls (g *Universe) {
     if g.Player.sprite.on_the_ground {
         if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) {
             g.Player.sprite.speed_x = -g.Player.sprite.grip_x
+            g.Player.sprite.direction = LEFT
         } else if ebiten.IsKeyPressed(ebiten.KeyArrowRight) {
             g.Player.sprite.speed_x = g.Player.sprite.grip_x
+            g.Player.sprite.direction = RIGHT
         } else {
             g.Player.sprite.speed_x = 0
         }
         if ebiten.IsKeyPressed(ebiten.KeyArrowUp) {
             g.Player.sprite.speed_y = -g.Player.sprite.grip_y
+        }
+    } else {
+        if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) {
+            g.Player.sprite.direction = LEFT
+        } else if ebiten.IsKeyPressed(ebiten.KeyArrowRight) {
+            g.Player.sprite.direction = RIGHT
         }
     }
     if ebiten.IsKeyPressed(ebiten.KeySpace) {
@@ -35,13 +43,8 @@ func control_enemy (g *Universe) {
             distance_x = math.Abs(
                 math.Abs(g.Player.sprite.pos_x) - math.Abs(g.Enemies[idx].sprite.pos_x))
             if distance_x < 50 {
-                // if too close
+                // dont get too close
                 g.Enemies[idx].sprite.speed_x = 0
-                if g.Player.sprite.pos_x < g.Enemies[idx].sprite.pos_x {
-                    g.Enemies[idx].sprite.direction = LEFT
-                } else {
-                    g.Enemies[idx].sprite.direction = RIGHT
-                }
             } else if g.Player.sprite.pos_x < g.Enemies[idx].sprite.pos_x {
                 g.Enemies[idx].sprite.speed_x = LEFT
             } else {
@@ -50,6 +53,12 @@ func control_enemy (g *Universe) {
             if g.Player.sprite.rect_bottom() < g.Enemies[idx].sprite.pos_y {
                 g.Enemies[idx].sprite.speed_y = -g.Player.sprite.grip_y
             }
+        }
+        // Aim at the enemy
+        if g.Player.sprite.pos_x < g.Enemies[idx].sprite.pos_x {
+            g.Enemies[idx].sprite.direction = LEFT
+        } else {
+            g.Enemies[idx].sprite.direction = RIGHT
         }
         // Should shoot or not
         distance_y = math.Abs(

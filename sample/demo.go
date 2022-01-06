@@ -6,10 +6,12 @@ package main
 import (
     "fmt"
     "log"
+    "time"
     "bytes"
     "image"
     "image/color"
     "image/draw"
+    "math/rand"
     "github.com/hajimehoshi/ebiten/v2"
     "github.com/hajimehoshi/ebiten/v2/examples/resources/images"
     "github.com/gsteixeira/opesvengine"
@@ -48,6 +50,10 @@ func (g *Game) Update() error {
             g.World.Enemies = append(g.World.Enemies[:i], g.World.Enemies[i+1:]...)
         }
     }
+    // add a new enemy if the one we have has died
+    if len(g.World.Enemies) < 1 {
+        g.World.Enemies = append(g.World.Enemies, make_enemy())
+    }
     // ebiten update
     opesvengine.GeUpdate(&g.World)
     return nil
@@ -63,7 +69,23 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
     return g.ScreenWidth, g.ScreenHeight
 }
 
+// Creates a new enemy instance at random location
+func make_enemy() opesvengine.Character {
+    // draw small square to be used as ammo
+    bullet_img := image.NewRGBA(image.Rect(0, 0, 4, 4))
+    col := color.RGBA{255, 255, 0, 255}
+    draw.Draw(bullet_img, bullet_img.Bounds(), &image.Uniform{col}, image.ZP, draw.Src)
+    img, _, err := image.Decode(bytes.NewReader(images.Runner_png))
+    if err != nil { panic(err) }
+    pos_x := float64(rand.Intn(screenWidth))
+    enemy_char := opesvengine.NewCharacter(pos_x, 1, 16, 32, img)
+    enemy_char.Set_weapon(opesvengine.NewWeapon("gun", 3, 40, 10, 500, bullet_img))
+    return enemy_char
+}
+
 func main() {
+    // seed random generator
+    rand.Seed(time.Now().UnixNano())
     // Create the player
     img, _, err := image.Decode(bytes.NewReader(images.Runner_png))
     player_char := opesvengine.NewCharacter(0, 0, 16, 32, img)
@@ -71,12 +93,9 @@ func main() {
     bullet_img := image.NewRGBA(image.Rect(0, 0, 4, 4))
     col := color.RGBA{255, 0, 0, 255}
     draw.Draw(bullet_img, bullet_img.Bounds(), &image.Uniform{col}, image.ZP, draw.Src)
-    player_char.Set_weapon(opesvengine.NewWeapon("gun", 3, 39, 10, 200, bullet_img))
+    player_char.Set_weapon(opesvengine.NewWeapon("gun", 3, 40, 10, 200, bullet_img))
     // enemy
-    img, _, err = image.Decode(bytes.NewReader(images.Runner_png))
-    enemy_char := opesvengine.NewCharacter(100, 20, 16, 32, img)
-    enemy_char.Set_weapon(opesvengine.NewWeapon("gun", 3, 15, 10, 500, bullet_img))
-    enemies := []opesvengine.Character { enemy_char, }
+    enemies := []opesvengine.Character {make_enemy(), }
     // Map
     img, _, err = image.Decode(bytes.NewReader(images.Tiles_png))
     the_map := opesvengine.Draw_map(gamemap, img, 32, 32)

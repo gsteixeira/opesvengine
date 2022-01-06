@@ -41,8 +41,6 @@ func (s *Sprite) check_collision(target_list []Sprite, game *Universe) {
     var side string
     var tile_rect SpriteRect
     var s_rect SpriteRect = s.get_rect(s.speed_x, s.speed_y)
-    s.grip_y = 0
-    s.grip_x = 0
     s.on_the_ground = false
     for idx, tile := range target_list {
         tile_rect = tile.get_rect(0, 0)
@@ -59,11 +57,11 @@ func (s *Sprite) check_collision(target_list []Sprite, game *Universe) {
                     }
                 case "ground":
                     s.speed_y = 0
-                    s.grip_y = JUMP_POWER
-                    s.grip_x = FWD_SPEED
                     s.on_the_ground = true
                 case "head":
-                    s.speed_y = s.gravity
+                    if s.speed_y < 0 {
+                        s.speed_y = s.gravity * 2
+                    }
             }
             // if it's a bullet, inflict damage
             if s.kind == "bullet" && tile.kind == "character" {
@@ -106,12 +104,6 @@ func (s *Sprite) run_physics(game *Universe){
     // Set player's next position
     s.pos_x += float64(s.speed_x)
     s.pos_y += float64(s.speed_y)
-    // set player direction
-    if s.speed_x > 0 {
-        s.direction = RIGHT
-    } else if s.speed_x < 0 {
-        s.direction = LEFT
-    }
 }
 
 // Run physics for each moving sprite

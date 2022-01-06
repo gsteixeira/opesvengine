@@ -75,8 +75,8 @@ func NewSprite(x float64, y float64, imgr image.Image, is_static bool) Sprite {
         frame_heigth: FRAME_HEIGTH,
         frame_number: 0,
         // physics
-        grip_x: 0,
-        grip_y: 0,
+        grip_x: FWD_SPEED,
+        grip_y: JUMP_POWER,
         on_the_ground: false,
         solid: true,
         Static: is_static,
